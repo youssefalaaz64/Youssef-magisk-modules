@@ -1,104 +1,129 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Site</title>
+  <title>Blank Editor</title>
 
   <style>
-    :root {
-      --bg: #ffffff;
-      --text: #000000;
-      --accent: #000000;
-    }
-
     body {
       margin: 0;
-      padding: 0;
-      background-color: var(--bg);
-      color: var(--text);
+      background: white;
       font-family: Arial, sans-serif;
-      transition: background 0.3s, color 0.3s;
     }
 
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 40px 20px;
-      text-align: center;
+    #editor {
+      padding: 40px;
+      min-height: 100vh;
+      outline: none;
     }
 
-    h1 {
-      font-size: 42px;
-      margin-bottom: 10px;
+    .panel {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: #f2f2f2;
+      padding: 10px;
+      border-radius: 8px;
     }
 
-    p {
-      font-size: 18px;
-      opacity: 0.8;
-    }
-
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      border: 2px solid var(--accent);
-      background: transparent;
-      color: var(--text);
+    .panel button {
+      margin: 3px;
+      padding: 5px 8px;
       cursor: pointer;
-      font-size: 16px;
-      transition: 0.3s;
     }
 
-    button:hover {
-      background: var(--accent);
-      color: var(--bg);
+    .hidden {
+      display: none;
     }
 
-    .card {
-      margin-top: 30px;
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      text-align: left;
+    .page {
+      cursor: pointer;
+      padding: 3px;
+      font-size: 13px;
     }
 
-    .dark {
-      --bg: #121212;
-      --text: #ffffff;
-      --accent: #ffffff;
+    .page:hover {
+      background: #ddd;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="container">
-    <h1 id="title">Your Custom Site</h1>
-    <p id="description">A clean, customizable white page.</p>
+  <div class="panel">
+    <button onclick="newPage()">New</button>
+    <button onclick="copyPage()">Copy</button>
+    <button onclick="deletePage()">Delete</button>
+    <button onclick="togglePanel()">Hide</button>
 
-    <button onclick="addContent()">Add Content</button>
-    <button onclick="toggleTheme()">Toggle Theme</button>
-
-    <div id="content"></div>
+    <div id="pages"></div>
   </div>
 
+  <div id="editor" contenteditable="true"></div>
+
   <script>
-    function addContent() {
-      const container = document.getElementById("content");
+    let current = "page1";
 
-      const card = document.createElement("div");
-      card.className = "card";
-
-      card.innerHTML = `
-        <h2>New Section</h2>
-        <p>You can edit this however you want.</p>
-      `;
-
-      container.appendChild(card);
+    function save() {
+      localStorage.setItem(current, document.getElementById("editor").innerHTML);
     }
 
-    function toggleTheme() {
-      document.body.classList.toggle("dark");
+    function load(name) {
+      current = name;
+      document.getElementById("editor").innerHTML = localStorage.getItem(name) || "";
+    }
+
+    function refreshList() {
+      const container = document.getElementById("pages");
+      container.innerHTML = "";
+
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+
+        const div = document.createElement("div");
+        div.className = "page";
+        div.textContent = key;
+
+        div.onclick = () => load(key);
+        container.appendChild(div);
+      }
+    }
+
+    function newPage() {
+      const name = "page_" + Date.now();
+      localStorage.setItem(name, "");
+      refreshList();
+      load(name);
+    }
+
+    function copyPage() {
+      const newName = current + "_copy";
+      localStorage.setItem(newName, localStorage.getItem(current));
+      refreshList();
+    }
+
+    function deletePage() {
+      localStorage.removeItem(current);
+      refreshList();
+      const keys = Object.keys(localStorage);
+      if (keys.length > 0) load(keys[0]);
+      else document.getElementById("editor").innerHTML = "";
+    }
+
+    function togglePanel() {
+      document.querySelector(".panel").classList.toggle("hidden");
+    }
+
+    // auto save
+    setInterval(save, 1500);
+
+    refreshList();
+    if (localStorage.getItem(current)) {
+      load(current);
+    } else {
+      localStorage.setItem(current, "");
     }
   </script>
 

@@ -3,14 +3,103 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title></title>
+  <title>My First Website</title>
+
   <style>
     body {
       margin: 0;
-      background: white;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+    }
+
+    header {
+      background: #222;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+
+    nav {
+      background: #444;
+      display: flex;
+      justify-content: center;
+    }
+
+    nav button {
+      background: none;
+      border: none;
+      color: white;
+      padding: 15px 20px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    nav button:hover {
+      background: #666;
+    }
+
+    .page {
+      display: none;
+      padding: 20px;
+    }
+
+    .active {
+      display: block;
+    }
+
+    footer {
+      background: #222;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
     }
   </style>
 </head>
+
 <body>
+
+<header>
+  <h1>My First Website</h1>
+</header>
+
+<nav>
+  <button onclick="showPage('home')">Home</button>
+  <button onclick="showPage('about')">About</button>
+  <button onclick="showPage('contact')">Contact</button>
+</nav>
+
+<div id="home" class="page active">
+  <h2>Welcome</h2>
+  <p>This is your first simple website built with HTML, CSS, and JavaScript.</p>
+</div>
+
+<div id="about" class="page">
+  <h2>About</h2>
+  <p>This website demonstrates basic page navigation without reloading.</p>
+</div>
+
+<div id="contact" class="page">
+  <h2>Contact</h2>
+  <p>Email: example@email.com</p>
+</div>
+
+<footer>
+  <p>© 2026 - All rights reserved</p>
+</footer>
+
+<script>
+  function showPage(pageId) {
+    let pages = document.querySelectorAll('.page');
+    pages.forEach(page => {
+      page.classList.remove('active');
+    });
+
+    document.getElementById(pageId).classList.add('active');
+  }
+</script>
+
 </body>
 </html>
